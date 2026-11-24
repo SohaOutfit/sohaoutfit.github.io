@@ -1,0 +1,9 @@
+{
+  "ordersEndpoint": "",
+  "whatsapp": "8801815849575",
+  "delivery": {
+    "inside": 70,
+    "outside": 120
+  },
+  "heroImage": "images/hero.svg"
+}

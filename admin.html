@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Soha Outfit — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fdf7f4; --surface: #ffffff; --surface-2: #f9ece7; --ink: #2b1d20; --ink-soft: #6d565d;
+    --line: #ecd9d2; --rose: #a4133c; --rose-deep: #7d0e2e; --rose-soft: #fbe9ee; --on-rose: #fff;
+    --wa: #1faa55; --ok: #1f8a4c; --warn: #b26a00; --muted-badge: #5b5257;
+    --shadow: 0 6px 20px rgba(125,14,46,.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1214; --surface: #251a1e; --surface-2: #2e2025; --ink: #f6e9ec; --ink-soft: #c4a7ae;
+      --line: #43303a; --rose: #f06a8d; --rose-deep: #f78ba6; --rose-soft: #3a222c; --on-rose: #221016;
+      --ok: #4fd18a; --warn: #f0b552; --muted-badge: #8a7f84; --shadow: 0 6px 20px rgba(0,0,0,.45);
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Hind Siliguri", system-ui, sans-serif; line-height: 1.55; }
+  a { color: var(--rose); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 14px 90px; }
+  h1, h2, h3 { line-height: 1.3; }
+  .top { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .top-in { max-width: 760px; margin: 0 auto; padding: 10px 14px 0; }
+  .brand { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .brand h1 { margin: 0; font-size: 1.25rem; }
+  .brand h1 span { color: var(--rose); }
+  .tabs { display: flex; gap: 4px; margin-top: 8px; overflow-x: auto; }
+  .tab { flex: 1; border: 0; background: none; color: var(--ink-soft); font: inherit; font-weight: 700; padding: 10px 8px; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+  .tab[aria-selected="true"] { color: var(--rose); border-bottom-color: var(--rose); }
+  .tab .count { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--rose); color: var(--on-rose); font-size: .78rem; margin-left: 4px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; padding: 9px 18px; min-height: 2.6rem; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+  .btn-rose { background: var(--rose); color: var(--on-rose); }
+  .btn-ghost { background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-sm { padding: 5px 12px; min-height: 2.2rem; font-size: .9rem; }
+  .btn-wa { background: var(--wa); color: #fff; }
+  .btn-danger { background: none; color: var(--rose); border: 1.5px solid var(--rose); }
+  .full { width: 100%; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 14px; margin-top: 14px; }
+  label.f { display: grid; gap: 4px; font-weight: 600; font-size: .95rem; margin-top: 12px; }
+  label.f small, .hint { font-weight: 400; color: var(--ink-soft); font-size: .86rem; }
+  input[type="text"], input[type="password"], input[type="number"], input[type="url"], input[type="tel"], textarea, select {
+    width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 1rem;
+  }
+  textarea { min-height: 84px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--rose); outline-offset: 1px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .muted { color: var(--ink-soft); }
+  /* product list */
+  .plist { display: grid; gap: 12px; margin-top: 14px; }
+  .pitem { display: grid; grid-template-columns: 78px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px; box-shadow: var(--shadow); }
+  .pitem img { width: 78px; height: 96px; object-fit: cover; border-radius: 10px; background: var(--surface-2); }
+  .pitem.off { opacity: .6; }
+  .pitem h3 { margin: 0; font-size: 1.02rem; }
+  .pmeta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 3px; font-size: .88rem; }
+  .tag { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: .8rem; font-weight: 700; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+  .tag.in { color: var(--ok); border-color: var(--ok); background: none; }
+  .tag.out { color: #fff; background: var(--muted-badge); border-color: var(--muted-badge); }
+  .tag.hid { color: var(--warn); border-color: var(--warn); background: none; }
+  .pactions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  /* editor */
+  .imgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-top: 8px; }
+  .imgbox { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface-2); aspect-ratio: 3/4; border: 2px solid transparent; }
+  .imgbox.first { border-color: var(--rose); }
+  .imgbox img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .imgbox .x, .imgbox .mk { position: absolute; border: 0; border-radius: 999px; font: inherit; font-size: .75rem; font-weight: 700; cursor: pointer; min-height: 0; }
+  .imgbox .x { top: 4px; right: 4px; width: 26px; height: 26px; background: rgba(0,0,0,.65); color: #fff; }
+  .imgbox .mk { left: 4px; bottom: 4px; padding: 2px 7px; background: rgba(0,0,0,.6); color: #fff; }
+  .imgbox.first .mk { background: var(--rose); color: var(--on-rose); }
+  .addimg { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--line); border-radius: 10px; aspect-ratio: 3/4; cursor: pointer; color: var(--rose); font-weight: 700; font-size: .9rem; padding: 6px; }
+  .preset { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .switch-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .switch-row label { display: flex; gap: 8px; align-items: center; border: 1.5px solid var(--line); border-radius: 12px; padding: 8px 12px; cursor: pointer; font-weight: 600; }
+  .switch-row input { width: 18px; height: 18px; accent-color: var(--rose); }
+  .sheet { position: fixed; inset: 0; z-index: 40; background: var(--bg); overflow-y: auto; }
+  .sheet-in { max-width: 760px; margin: 0 auto; padding: 12px 14px 120px; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; background: var(--bg); padding: 6px 0 10px; z-index: 2; border-bottom: 1px solid var(--line); }
+  .sheet-head h2 { margin: 0; font-size: 1.15rem; }
+  .savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; background: var(--surface); border-top: 1px solid var(--line); padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); }
+  .savebar .in { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; }
+  /* orders */
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .chip { border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 14px; font: inherit; font-weight: 600; cursor: pointer; min-height: 2.2rem; }
+  .chip[aria-pressed="true"] { background: var(--rose); border-color: var(--rose); color: var(--on-rose); }
+  .order h3 { margin: 0; font-size: 1.05rem; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .order .lines { display: grid; gap: 2px; margin-top: 6px; font-size: .95rem; }
+  .order .lines b { font-weight: 700; }
+  .st { font-size: .8rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; border: 1.5px solid currentColor; }
+  .st-New { color: var(--rose); } .st-Confirmed { color: var(--warn); } .st-Delivered { color: var(--ok); } .st-Cancelled { color: var(--ink-soft); }
+  .stbtns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .stbtns .on { background: var(--rose); color: var(--on-rose); border-color: var(--rose); }
+  /* misc */
+  .busy { position: fixed; inset: 0; z-index: 90; background: rgba(20,8,12,.55); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .busy div { background: var(--surface); color: var(--ink); border-radius: 16px; padding: 18px 22px; font-weight: 700; text-align: center; max-width: 320px; }
+  .spin { width: 34px; height: 34px; border: 4px solid var(--line); border-top-color: var(--rose); border-radius: 50%; margin: 0 auto 10px; animation: sp 1s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  .toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 95; background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 12px; font-weight: 600; max-width: 92vw; text-align: center; box-shadow: var(--shadow); }
+  .toast.err { background: var(--rose); color: var(--on-rose); }
+  .login { max-width: 460px; margin: 40px auto 0; }
+  .login h1 { text-align: center; margin: 0 0 4px; }
+  .login h1 span { color: var(--rose); }
+  details { margin-top: 14px; background: var(--surface-2); border-radius: 12px; padding: 10px 14px; }
+  details summary { font-weight: 700; cursor: pointer; }
+  details ol { padding-left: 20px; margin: 8px 0 0; }
+  .empty { text-align: center; color: var(--ink-soft); padding: 26px 10px; }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div class="wrap" id="loginView" hidden>
+  <div class="login card">
+    <h1>Soha <span>Outfit</span></h1>
+    <p class="muted" style="text-align:center;margin:0">Admin Panel — শুধু মালিকের জন্য</p>
+    <label class="f">GitHub Token (চাবি)
+      <input type="password" id="tokenIn" placeholder="github_pat_..." autocomplete="off" />
+      <small>একবার দিলেই হবে, এই ফোনের ব্রাউজারেই সেভ থাকবে।</small>
+    </label>
+    <button class="btn btn-rose full" id="loginBtn" style="margin-top:14px">Login / ঢুকুন</button>
+    <p class="hint" id="loginErr" style="color:var(--rose)"></p>
+    <details>
+      <summary>Token কীভাবে বানাবো?</summary>
+      <ol>
+        <li>github.com-এ SohaOutfit অ্যাকাউন্টে লগইন করুন।</li>
+        <li>Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token।</li>
+        <li>Name: soha-admin, Expiration: 1 year।</li>
+        <li>Repository access: <b>Only select repositories</b> → sohaoutfit.github.io।</li>
+        <li>Permissions → Repository → <b>Contents: Read and write</b>।</li>
+        <li>Generate token → কপি করে এখানে পেস্ট করুন।</li>
+      </ol>
+    </details>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div id="mainView" hidden>
+  <div class="top"><div class="top-in">
+    <div class="brand">
+      <h1>Soha <span>Outfit</span> Admin</h1>
+      <div style="display:flex;gap:6px">
+        <a class="btn btn-ghost btn-sm" href="./" target="_blank" rel="noopener">সাইট দেখুন</a>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="products" aria-selected="true">প্রোডাক্ট</button>
+      <button class="tab" role="tab" data-tab="orders" aria-selected="false">অর্ডার <span class="count" id="newCount" hidden></span></button>
+      <button class="tab" role="tab" data-tab="settings" aria-selected="false">সেটিংস</button>
+    </div>
+  </div></div>
+
+  <div class="wrap">
+    <!-- Products -->
+    <section id="tab-products">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <div class="muted" id="pSummary"></div>
+        <button class="btn btn-rose" id="addBtn">+ নতুন প্রোডাক্ট</button>
+      </div>
+      <div class="plist" id="plist"></div>
+    </section>
+
+    <!-- Orders -->
+    <section id="tab-orders" hidden>
+      <div class="card" id="noEndpoint" hidden>
+        <b>অর্ডার লিস্ট এখনো চালু হয়নি।</b>
+        <p class="muted" style="margin:6px 0 0">আগে Google Sheet সেটআপ করে "সেটিংস" ট্যাবে লিংকটা দিন। ততদিন অর্ডার আগের মতো WhatsApp-এ আসবে।</p>
+      </div>
+      <div class="card" id="keyBox" hidden>
+        <label class="f" style="margin-top:0">অর্ডার পাসওয়ার্ড <small>(Google Sheet-এর Settings শিটে যেটা লিখেছেন)</small>
+          <input type="password" id="keyIn" autocomplete="off" />
+        </label>
+        <button class="btn btn-rose full" id="keyBtn" style="margin-top:10px">অর্ডার দেখুন</button>
+      </div>
+      <div id="ordersBox" hidden>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px">
+          <span class="muted" id="oSummary"></span>
+          <button class="btn btn-ghost btn-sm" id="reloadOrders">↻ রিফ্রেশ</button>
+        </div>
+        <div class="chips" id="oChips"></div>
+        <div id="olist"></div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="tab-settings" hidden>
+      <div class="card">
+        <h3 style="margin:0">অর্ডার সার্ভার (Google Sheet)</h3>
+        <label class="f">Apps Script Web app URL
+          <input type="url" id="sEndpoint" placeholder="https://script.google.com/macros/s/.../exec" />
+          <small>খালি রাখলে অর্ডার শুধু WhatsApp-এ যাবে (আগের মতো)।</small>
+          <small><a href="https://github.com/SohaOutfit/sohaoutfit.github.io/blob/main/ADMIN-SETUP.md" target="_blank" rel="noopener">সেটআপ গাইড দেখুন</a> • <a href="https://raw.githubusercontent.com/SohaOutfit/sohaoutfit.github.io/main/apps-script/Code.gs" target="_blank" rel="noopener">Code.gs</a></small>
+        </label>
+        <button class="btn btn-ghost btn-sm" id="testEndpoint" style="margin-top:8px">লিংক টেস্ট করুন</button>
+        <span class="hint" id="testResult"></span>
+      </div>
+      <div class="card">
+        <h3 style="margin:0">WhatsApp ও ডেলিভারি</h3>
+        <label class="f">WhatsApp নম্বর <small>(880 দিয়ে শুরু, যেমন 8801815849575)</small>
+          <input type="tel" id="sWa" />
+        </label>
+        <div class="row2">
+          <label class="f">ঢাকার ভিতরে (টাকা)<input type="number" id="sIn" min="0" /></label>
+          <label class="f">ঢাকার বাইরে (টাকা)<input type="number" id="sOut" min="0" /></label>
+        </div>
+        <p class="hint">নোট: পেজের ভেতরের "ডেলিভারি চার্জ" লেখাগুলো ৭০/১২০ ধরে লেখা। চার্জ বদলালে আমাকে (Doraemon) বলবেন, লেখাগুলোও বদলে দেবো। অর্ডার ফর্মের হিসাব এখান থেকেই চলবে।</p>
+      </div>
+      <button class="btn btn-rose full" id="saveSettings" style="margin-top:14px">সেটিংস সেভ করুন</button>
+    </section>
+  </div>
+</div>
+
+<!-- ===== PRODUCT EDITOR ===== -->
+<div class="sheet" id="editor" hidden>
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <h2 id="edTitle">নতুন প্রোডাক্ট</h2>
+      <button class="btn btn-ghost btn-sm" id="edClose">✕ বন্ধ</button>
+    </div>
+    <p class="muted" style="margin:10px 0 0">কোড: <b id="edCode"></b></p>
+    <label class="f">নাম *<input type="text" id="edName" placeholder="যেমন: লাল জর্জেট থ্রি পিস" /></label>
+    <div class="row2">
+      <label class="f">দাম (টাকা) <small>খালি = "দাম জানতে WhatsApp"</small><input type="number" id="edPrice" min="0" inputmode="numeric" /></label>
+      <label class="f">ক্যাটাগরি<input type="text" id="edCat" list="catList" /></label>
+    </div>
+    <datalist id="catList"></datalist>
+    <label class="f">ব্যাজ <small>(ছবির উপরে ছোট লেখা — যেমন নতুন, জনপ্রিয়; খালি রাখা যায়)</small>
+      <input type="text" id="edBadge" list="badgeList" />
+    </label>
+    <datalist id="badgeList"><option value="নতুন"></option><option value="জনপ্রিয়"></option><option value="অফার"></option><option value="সীমিত স্টক"></option></datalist>
+    <label class="f">বিবরণ<textarea id="edDesc" placeholder="কাপড়, কাজ, কোন অনুষ্ঠানে মানাবে…"></textarea></label>
+    <label class="f">সাইজ <small>কমা দিয়ে লিখুন। খালি = ফ্রি সাইজ, S–XXL</small>
+      <input type="text" id="edSizes" placeholder="৩৬, ৩৮, ৪০, ৪২, ৪৪, ৪৬" />
+    </label>
+    <div class="preset">
+      <button type="button" class="btn btn-ghost btn-sm" data-sz="৩৬, ৩৮, ৪০, ৪২, ৪৪, ৪৬">৩৬–৪৬</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-sz="S, M, L, XL, XXL">S–XXL</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-sz="ফ্রি সাইজ">ফ্রি সাইজ</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-sz="">খালি</button>
+    </div>
+    <div class="switch-row">
+      <label><input type="checkbox" id="edStock" checked /> স্টকে আছে</label>
+      <label><input type="checkbox" id="edActive" checked /> সাইটে দেখাবে</label>
+    </div>
+    <div class="f" style="margin-top:14px">ছবি * <small>লাল দাগের ছবিটা প্রথমে দেখাবে। ফোন থেকে একসাথে অনেক ছবি দেওয়া যাবে।</small></div>
+    <div class="imgs" id="edImgs"></div>
+    <input type="file" id="edFile" accept="image/*" multiple hidden />
+  </div>
+</div>
+<div class="savebar" id="edBar" hidden><div class="in">
+  <button class="btn btn-ghost" id="edCancel" style="flex:1">বাতিল</button>
+  <button class="btn btn-rose" id="edSave" style="flex:2">সেভ করুন</button>
+</div></div>
+
+<div class="busy" id="busy" hidden><div><div class="spin"></div><span id="busyText">সেভ হচ্ছে…</span></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+  var OWNER = "SohaOutfit", REPO = "sohaoutfit.github.io", BRANCH = "main";
+  var API = "https://api.github.com";
+  var LS_TOKEN = "soha_admin_gh_token", LS_KEY = "soha_admin_orders_key";
+  var STATUSES = [["New", "নতুন"], ["Confirmed", "কনফার্ম"], ["Delivered", "ডেলিভারি হয়েছে"], ["Cancelled", "বাতিল"]];
+  var SAVED_MSG = "সেভ হয়েছে ✅ 1–2 minute-e site-e dekhabe";
+
+  var token = localStorage.getItem(LS_TOKEN) || "";
+  var state = { head: null, data: null, config: null, orders: [], oFilter: "all" };
+
+  function $(id) { return document.getElementById(id); }
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  var BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+  function bn(n) { return String(n).replace(/[0-9]/g, function (d) { return BN[+d]; }); }
+  function taka(n) { return n === "" || n == null ? "—" : bn(Number(n).toLocaleString("en-IN")) + " টাকা"; }
+
+  var toastTimer;
+  function toast(msg, isErr) {
+    var t = $("toast"); t.textContent = msg; t.className = "toast" + (isErr ? " err" : ""); t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, isErr ? 6000 : 4000);
+  }
+  function busy(on, text) { $("busyText").textContent = text || "সেভ হচ্ছে…"; $("busy").hidden = !on; }
+
+  /* ---------- UTF-8 base64 ---------- */
+  function b64encode(str) {
+    var bytes = new TextEncoder().encode(str), bin = "";
+    for (var i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+  function b64decode(b64) {
+    var bin = atob(String(b64).replace(/\s/g, "")), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  /* ---------- GitHub API ---------- */
+  function gh(path, opts) {
+    opts = opts || {};
+    var headers = { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + token, "X-GitHub-Api-Version": "2022-11-28" };
+    if (opts.body) headers["Content-Type"] = "application/json";
+    return fetch(API + path, { method: opts.method || "GET", headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: "no-store" })
+      .then(function (r) {
+        return r.text().then(function (txt) {
+          var j = null; try { j = txt ? JSON.parse(txt) : null; } catch (e) {}
+          if (!r.ok) { var err = new Error((j && j.message) || ("HTTP " + r.status)); err.status = r.status; throw err; }
+          return j;
+        });
+      });
+  }
+  var R = "/repos/" + OWNER + "/" + REPO;
+  function headSha() { return gh(R + "/git/ref/heads/" + BRANCH).then(function (j) { return j.object.sha; }); }
+  function readJSON(path, ref) {
+    return gh(R + "/contents/" + path + "?ref=" + ref).then(function (j) { return JSON.parse(b64decode(j.content)); })
+      .catch(function (e) { if (e.status === 404) return null; throw e; });
+  }
+  function rawUrl(path) {
+    if (/^(https?:|data:|blob:)/.test(path)) return path;
+    return "https://raw.githubusercontent.com/" + OWNER + "/" + REPO + "/" + (state.head || BRANCH) + "/" + path;
+  }
+  function uploadBlob(b64) {
+    return gh(R + "/git/blobs", { method: "POST", body: { content: b64, encoding: "base64" } }).then(function (j) { return j.sha; });
+  }
+  /* build(headSha) -> Promise<{entries:[{path, content? , sha?, del?}], message}>; retried if branch moved */
+  function commit(build, attempt) {
+    attempt = attempt || 0;
+    var base;
+    return headSha().then(function (sha) {
+      base = sha;
+      return Promise.all([gh(R + "/git/commits/" + sha), build(sha)]);
+    }).then(function (res) {
+      var baseTree = res[0].tree.sha, plan = res[1];
+      return Promise.all(plan.entries.map(function (e) {
+        if (e.del) return Promise.resolve({ path: e.path, mode: "100644", type: "blob", sha: null });
+        if (e.sha) return Promise.resolve({ path: e.path, mode: "100644", type: "blob", sha: e.sha });
+        return uploadBlob(b64encode(e.content)).then(function (s) { return { path: e.path, mode: "100644", type: "blob", sha: s }; });
+      })).then(function (tree) {
+        return gh(R + "/git/trees", { method: "POST", body: { base_tree: baseTree, tree: tree } });
+      }).then(function (t) {
+        return gh(R + "/git/commits", { method: "POST", body: { message: plan.message, tree: t.sha, parents: [base] } });
+      }).then(function (c) {
+        return gh(R + "/git/refs/heads/" + BRANCH, { method: "PATCH", body: { sha: c.sha, force: false } }).then(function () { return c.sha; });
+      });
+    }).catch(function (e) {
+      if ((e.status === 422 || e.status === 409) && attempt < 2) return commit(build, attempt + 1);
+      throw e;
+    });
+  }
+
+  function normData(d) {
+    if (!d) d = { products: [] };
+    if (Array.isArray(d)) d = { products: d };
+    d.products = d.products || [];
+    var max = d.lastCodeNumber || 0;
+    d.products.forEach(function (p) { var m = /(\d+)$/.exec(p.code || ""); if (m) max = Math.max(max, +m[1]); });
+    d.lastCodeNumber = max;
+    return d;
+  }
+  function jsonText(o) { return JSON.stringify(o, null, 2) + "\n"; }
+
+  /* mutate(products data) on the latest version, then commit */
+  function saveProducts(mutate, message, extraEntries) {
+    busy(true);
+    return commit(function (sha) {
+      return readJSON("products.json", sha).then(function (d) {
+        d = normData(d);
+        var extra = mutate(d) || [];
+        d.updated = new Date().toISOString();
+        return { message: message, entries: [{ path: "products.json", content: jsonText(d) }].concat(extraEntries || [], extra) };
+      });
+    }).then(function (sha) {
+      state.head = sha;
+      return loadAll(true);
+    }).then(function () { busy(false); toast(SAVED_MSG); })
+      .catch(function (e) { busy(false); toast("সেভ হয়নি: " + friendly(e), true); throw e; });
+  }
+  function friendly(e) {
+    if (e.status === 401) return "Token ভুল বা মেয়াদ শেষ। আবার Login করুন।";
+    if (e.status === 403 || e.status === 404) return "Token-এ এই সাইটে লেখার অনুমতি নেই (Contents: Read and write লাগবে)।";
+    return e.message || "নেটওয়ার্ক সমস্যা";
+  }
+
+  /* ---------- Load ---------- */
+  function loadAll(quiet) {
+    if (!quiet) busy(true, "লোড হচ্ছে…");
+    return headSha().then(function (sha) {
+      state.head = sha;
+      return Promise.all([readJSON("products.json", sha), readJSON("config.json", sha)]);
+    }).then(function (res) {
+      state.data = normData(res[0]);
+      state.config = res[1] || {};
+      renderProducts(); renderSettings(); renderOrdersGate();
+      if (!quiet) busy(false);
+    }).catch(function (e) { if (!quiet) busy(false); throw e; });
+  }
+
+  /* ---------- Login ---------- */
+  function showLogin(msg) { $("mainView").hidden = true; $("loginView").hidden = false; $("loginErr").textContent = msg || ""; }
+  function showMain() { $("loginView").hidden = true; $("mainView").hidden = false; }
+  $("loginBtn").addEventListener("click", function () {
+    var t = $("tokenIn").value.trim();
+    if (!t) { $("loginErr").textContent = "Token পেস্ট করুন।"; return; }
+    token = t;
+    busy(true, "চেক করছি…");
+    gh(R).then(function () { return loadAll(true); }).then(function () {
+      localStorage.setItem(LS_TOKEN, token); busy(false); $("tokenIn").value = ""; showMain(); toast("স্বাগতম! 🎉");
+    }).catch(function (e) { busy(false); token = ""; showLogin(friendly(e)); });
+  });
+  $("logoutBtn").addEventListener("click", function () {
+    if (!confirm("Logout করবেন? আবার ঢুকতে Token লাগবে।")) return;
+    localStorage.removeItem(LS_TOKEN); token = ""; showLogin();
+  });
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll(".tab").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll(".tab").forEach(function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+      ["products", "orders", "settings"].forEach(function (n) { $("tab-" + n).hidden = n !== b.dataset.tab; });
+      if (b.dataset.tab === "orders") renderOrdersGate(true);
+    });
+  });
+
+  /* ---------- Products ---------- */
+  function renderProducts() {
+    var list = state.data.products, box = $("plist");
+    var inStock = list.filter(function (p) { return p.stock !== "out" && p.active !== false; }).length;
+    $("pSummary").textContent = "মোট " + bn(list.length) + "টি • সাইটে স্টকে " + bn(inStock) + "টি";
+    if (!list.length) { box.innerHTML = '<p class="empty">কোনো প্রোডাক্ট নেই। "+ নতুন প্রোডাক্ট" চাপুন।</p>'; return; }
+    box.innerHTML = "";
+    list.forEach(function (p, idx) {
+      var out = p.stock === "out", hid = p.active === false;
+      var el = document.createElement("div");
+      el.className = "pitem" + (hid ? " off" : "");
+      el.innerHTML =
+        '<img src="' + esc(rawUrl((p.images || [])[0] || "images/hero.svg")) + '" alt="" loading="lazy" />' +
+        '<div><h3>' + esc(p.name) + '</h3>' +
+        '<div class="pmeta"><span class="tag">' + esc(p.code) + '</span><b>' + (p.price ? taka(p.price) : "দাম নেই") + '</b>' +
+        (out ? '<span class="tag out">স্টক আউট</span>' : '<span class="tag in">স্টকে আছে</span>') +
+        (hid ? '<span class="tag hid">লুকানো</span>' : '') + '</div>' +
+        '<div class="pactions">' +
+          '<button class="btn btn-ghost btn-sm" data-a="edit">✏️ এডিট</button>' +
+          '<button class="btn btn-ghost btn-sm" data-a="stock">' + (out ? "Stock In করুন" : "Stock Out করুন") + '</button>' +
+          '<button class="btn btn-ghost btn-sm" data-a="hide">' + (hid ? "দেখান" : "লুকান") + '</button>' +
+          (idx > 0 ? '<button class="btn btn-ghost btn-sm" data-a="top">⬆ উপরে</button>' : '') +
+          '<button class="btn btn-danger btn-sm" data-a="del">ডিলিট</button>' +
+        '</div></div>';
+      el.querySelectorAll("button").forEach(function (b) {
+        b.addEventListener("click", function () { productAction(b.dataset.a, p.code); });
+      });
+      box.appendChild(el);
+    });
+  }
+  function find(d, code) { for (var i = 0; i < d.products.length; i++) if (d.products[i].code === code) return i; return -1; }
+  function orphanDeletes(d, paths) {
+    var used = {};
+    d.products.forEach(function (p) { (p.images || []).forEach(function (x) { used[x] = 1; }); });
+    if (state.config && state.config.heroImage) used[state.config.heroImage] = 1;
+    used["images/hero.svg"] = 1;
+    return paths.filter(function (x) { return /^images\//.test(x) && !used[x]; }).map(function (x) { return { path: x, del: true }; });
+  }
+  function productAction(a, code) {
+    if (a === "edit") { var i = find(state.data, code); if (i > -1) openEditor(state.data.products[i]); return; }
+    if (a === "stock") return saveProducts(function (d) { var i = find(d, code); if (i > -1) d.products[i].stock = d.products[i].stock === "out" ? "in" : "out"; }, "Admin: stock toggle " + code).catch(function () {});
+    if (a === "hide") return saveProducts(function (d) { var i = find(d, code); if (i > -1) d.products[i].active = d.products[i].active === false; }, "Admin: show/hide " + code).catch(function () {});
+    if (a === "top") return saveProducts(function (d) { var i = find(d, code); if (i > 0) d.products.unshift(d.products.splice(i, 1)[0]); }, "Admin: move " + code + " to top").catch(function () {});
+    if (a === "del") {
+      if (!confirm(code + " একদম ডিলিট করবেন? (শুধু লুকাতে চাইলে \"লুকান\" চাপুন)")) return;
+      return saveProducts(function (d) {
+        var i = find(d, code); if (i < 0) return [];
+        var imgs = d.products[i].images || [];
+        d.products.splice(i, 1);
+        return orphanDeletes(d, imgs);
+      }, "Admin: delete " + code).catch(function () {});
+    }
+  }
+
+  /* ---------- Editor ---------- */
+  var ed = null; // { isNew, code, images:[{path}|{b64, url}] }
+  function nextCode() { return "SO-" + String(state.data.lastCodeNumber + 1).padStart(3, "0"); }
+  function openEditor(p) {
+    var isNew = !p;
+    ed = { isNew: isNew, code: isNew ? nextCode() : p.code, images: isNew ? [] : (p.images || []).map(function (x) { return { path: x }; }), orig: isNew ? [] : (p.images || []).slice() };
+    $("edTitle").textContent = isNew ? "নতুন প্রোডাক্ট" : "এডিট: " + p.code;
+    $("edCode").textContent = ed.code + (isNew ? " (অটো)" : "");
+    $("edName").value = isNew ? "" : (p.name || "");
+    $("edPrice").value = isNew ? "" : (p.price || "");
+    $("edCat").value = isNew ? "থ্রি পিস" : (p.category || "");
+    $("edBadge").value = isNew ? "নতুন" : (p.badge || "");
+    $("edDesc").value = isNew ? "" : (p.description || "");
+    $("edSizes").value = isNew ? "" : (p.sizes || []).join(", ");
+    $("edStock").checked = isNew ? true : p.stock !== "out";
+    $("edActive").checked = isNew ? true : p.active !== false;
+    var cats = {}; state.data.products.forEach(function (x) { if (x.category) cats[x.category] = 1; }); cats["থ্রি পিস"] = 1;
+    $("catList").innerHTML = Object.keys(cats).map(function (c) { return '<option value="' + esc(c) + '"></option>'; }).join("");
+    renderEdImgs();
+    $("editor").hidden = false; $("edBar").hidden = false; $("editor").scrollTop = 0;
+    document.body.style.overflow = "hidden";
+  }
+  function closeEditor(force) {
+    if (!force && ed && ed.images.some(function (x) { return x.b64; }) && !confirm("নতুন ছবি সেভ হয়নি। বন্ধ করবেন?")) return;
+    $("editor").hidden = true; $("edBar").hidden = true; document.body.style.overflow = "";
+    if (ed) ed.images.forEach(function (x) { if (x.url) URL.revokeObjectURL(x.url); });
+    ed = null;
+  }
+  $("edClose").addEventListener("click", function () { closeEditor(); });
+  $("edCancel").addEventListener("click", function () { closeEditor(); });
+  document.querySelectorAll("[data-sz]").forEach(function (b) { b.addEventListener("click", function () { $("edSizes").value = b.dataset.sz; }); });
+
+  function renderEdImgs() {
+    var box = $("edImgs"); box.innerHTML = "";
+    ed.images.forEach(function (im, i) {
+      var d = document.createElement("div");
+      d.className = "imgbox" + (i === 0 ? " first" : "");
+      d.innerHTML = '<img src="' + esc(im.url || rawUrl(im.path)) + '" alt="" /><button class="x" aria-label="ছবি বাদ দিন">✕</button><button class="mk">' + (i === 0 ? "প্রথম" : "প্রথমে দিন") + '</button>';
+      d.querySelector(".x").addEventListener("click", function () { if (im.url) URL.revokeObjectURL(im.url); ed.images.splice(i, 1); renderEdImgs(); });
+      d.querySelector(".mk").addEventListener("click", function () { ed.images.unshift(ed.images.splice(i, 1)[0]); renderEdImgs(); });
+      box.appendChild(d);
+    });
+    var add = document.createElement("label");
+    add.className = "addimg"; add.htmlFor = "edFile"; add.innerHTML = "+ ছবি<br>যোগ করুন";
+    box.appendChild(add);
+  }
+  $("edFile").addEventListener("change", function () {
+    var files = Array.prototype.slice.call(this.files || []); this.value = "";
+    if (!files.length) return;
+    busy(true, "ছবি ছোট করছি… (" + bn(files.length) + "টি)");
+    files.reduce(function (pr, f) {
+      return pr.then(function () { return compress(f).then(function (r) { ed.images.push(r); }).catch(function () { toast("একটা ছবি পড়া যায়নি: " + f.name, true); }); });
+    }, Promise.resolve()).then(function () { busy(false); renderEdImgs(); });
+  });
+
+  /* resize to max 1200x1600, JPEG ~82% */
+  function compress(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, 1200 / w, 1600 / h);
+        var c = document.createElement("canvas"); c.width = Math.round(w * s); c.height = Math.round(h * s);
+        var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (blob) {
+          if (!blob) return reject(new Error("toBlob"));
+          var fr = new FileReader();
+          fr.onload = function () { resolve({ b64: String(fr.result).split(",")[1], url: URL.createObjectURL(blob) }); };
+          fr.onerror = reject; fr.readAsDataURL(blob);
+        }, "image/jpeg", 0.82);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("image")); };
+      img.src = url;
+    });
+  }
+
+  $("edSave").addEventListener("click", function () {
+    var name = $("edName").value.trim();
+    if (!name) { toast("নাম লিখুন", true); $("edName").focus(); return; }
+    if (!ed.images.length) { toast("অন্তত ১টা ছবি দিন", true); return; }
+    var priceN = parseInt(String($("edPrice").value).replace(/[^\d]/g, ""), 10);
+    var sizes = $("edSizes").value.split(/[,،\/]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var fields = {
+      name: name,
+      category: $("edCat").value.trim() || "থ্রি পিস",
+      price: priceN > 0 ? priceN : null,
+      badge: $("edBadge").value.trim(),
+      description: $("edDesc").value.trim(),
+      sizes: sizes,
+      stock: $("edStock").checked ? "in" : "out",
+      active: $("edActive").checked,
+      alt: name
+    };
+    var cur = ed, stamp = Date.now().toString(36);
+    busy(true, "ছবি আপলোড হচ্ছে…");
+    // upload new images as blobs first (once), then commit
+    var n = 0, imgEntries = [];
+    var finalPathsP = cur.images.reduce(function (pr, im) {
+      return pr.then(function (acc) {
+        if (im.path) { acc.push(im.path); return acc; }
+        n++;
+        var path = "images/" + cur.code.toLowerCase() + "-" + stamp + "-" + n + ".jpg";
+        return uploadBlob(im.b64).then(function (sha) { imgEntries.push({ path: path, sha: sha }); acc.push(path); return acc; });
+      });
+    }, Promise.resolve([])).catch(function (e) {
+      busy(false); toast("ছবি আপলোড হয়নি: " + friendly(e), true); e.toasted = true; throw e;
+    });
+    finalPathsP.then(function (paths) {
+      fields.images = paths;
+      var removed = cur.orig.filter(function (x) { return paths.indexOf(x) === -1; });
+      return saveProducts(function (d) {
+        if (cur.isNew) {
+          var code = cur.code;
+          if (find(d, code) > -1 || d.lastCodeNumber >= +code.slice(3)) {
+            // someone else added a product meanwhile; images keep their file names, only the code moves
+            code = "SO-" + String(d.lastCodeNumber + 1).padStart(3, "0");
+          }
+          var num = +code.slice(3);
+          d.lastCodeNumber = Math.max(d.lastCodeNumber, num);
+          d.products.unshift(Object.assign({ code: code }, fields));
+          return [];
+        }
+        var i = find(d, cur.code);
+        if (i < 0) throw new Error(cur.code + " আর নেই (অন্য কেউ ডিলিট করেছে?)");
+        d.products[i] = Object.assign({}, d.products[i], fields);
+        return orphanDeletes(d, removed);
+      }, (cur.isNew ? "Admin: add " : "Admin: edit ") + cur.code, imgEntries);
+    }).then(function () { closeEditor(true); }).catch(function () { busy(false); });
+  });
+  $("addBtn").addEventListener("click", function () { openEditor(null); });
+
+  /* ---------- Settings ---------- */
+  function renderSettings() {
+    var c = state.config || {};
+    $("sEndpoint").value = c.ordersEndpoint || "";
+    $("sWa").value = c.whatsapp || "8801815849575";
+    $("sIn").value = (c.delivery && c.delivery.inside != null) ? c.delivery.inside : 70;
+    $("sOut").value = (c.delivery && c.delivery.outside != null) ? c.delivery.outside : 120;
+  }
+  function validEndpoint(u) { return !u || /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u); }
+  $("testEndpoint").addEventListener("click", function () {
+    var u = $("sEndpoint").value.trim();
+    if (!u) { $("testResult").textContent = " লিংক খালি"; return; }
+    if (!validEndpoint(u)) { $("testResult").textContent = " ❌ লিংক ঠিক না — /exec দিয়ে শেষ হতে হবে"; return; }
+    $("testResult").textContent = " চেক করছি…";
+    fetch(u + "?action=ping").then(function (r) { return r.json(); }).then(function (j) {
+      $("testResult").textContent = j && j.ok ? " ✅ কাজ করছে!" : " ❌ উত্তর ঠিক না";
+    }).catch(function () { $("testResult").textContent = " ❌ কানেক্ট হয়নি (Deploy-তে Who has access: Anyone দিয়েছেন?)"; });
+  });
+  $("saveSettings").addEventListener("click", function () {
+    var u = $("sEndpoint").value.trim();
+    if (!validEndpoint(u)) { toast("Web app URL ঠিক না — https://script.google.com/macros/s/.../exec হতে হবে", true); return; }
+    var wa = $("sWa").value.replace(/\D/g, "");
+    if (!/^8801[3-9]\d{8}$/.test(wa)) { toast("WhatsApp নম্বর 8801XXXXXXXXX আকারে দিন", true); return; }
+    var di = parseInt($("sIn").value, 10), dout = parseInt($("sOut").value, 10);
+    if (!(di >= 0) || !(dout >= 0)) { toast("ডেলিভারি চার্জ লিখুন", true); return; }
+    busy(true);
+    commit(function (sha) {
+      return readJSON("config.json", sha).then(function (c) {
+        c = c || {};
+        c.ordersEndpoint = u; c.whatsapp = wa; c.delivery = { inside: di, outside: dout };
+        return { message: "Admin: update settings", entries: [{ path: "config.json", content: jsonText(c) }] };
+      });
+    }).then(function (sha) { state.head = sha; return loadAll(true); })
+      .then(function () { busy(false); toast(SAVED_MSG); })
+      .catch(function (e) { busy(false); toast("সেভ হয়নি: " + friendly(e), true); });
+  });
+
+  /* ---------- Orders ---------- */
+  function endpoint() { return (state.config && state.config.ordersEndpoint) || ""; }
+  function renderOrdersGate(autoload) {
+    var ep = endpoint();
+    $("noEndpoint").hidden = !!ep;
+    var key = localStorage.getItem(LS_KEY);
+    $("keyBox").hidden = !ep || !!key;
+    $("ordersBox").hidden = !ep || !key;
+    if (ep && key && autoload) loadOrders();
+  }
+  $("keyBtn").addEventListener("click", function () {
+    var k = $("keyIn").value.trim(); if (!k) return;
+    localStorage.setItem(LS_KEY, k); $("keyIn").value = ""; renderOrdersGate(true);
+  });
+  $("reloadOrders").addEventListener("click", loadOrders);
+  function loadOrders() {
+    var ep = endpoint(), key = localStorage.getItem(LS_KEY);
+    if (!ep || !key) return;
+    $("oSummary").textContent = "লোড হচ্ছে…";
+    fetch(ep + "?action=list&key=" + encodeURIComponent(key) + "&t=" + Date.now()).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j.ok) {
+        if (j.error === "wrong_password") { localStorage.removeItem(LS_KEY); renderOrdersGate(); toast("পাসওয়ার্ড ভুল। আবার দিন।", true); return; }
+        throw new Error(j.error);
+      }
+      state.orders = j.orders || []; renderOrders();
+    }).catch(function () { $("oSummary").textContent = "অর্ডার লোড হয়নি — ইন্টারনেট/লিংক চেক করুন"; });
+  }
+  function renderOrders() {
+    var all = state.orders, nNew = all.filter(function (o) { return o.status === "New"; }).length;
+    $("newCount").hidden = !nNew; $("newCount").textContent = bn(nNew);
+    $("oSummary").textContent = "মোট " + bn(all.length) + "টি অর্ডার • নতুন " + bn(nNew) + "টি";
+    var chips = [["all", "সব"]].concat(STATUSES);
+    $("oChips").innerHTML = "";
+    chips.forEach(function (c) {
+      var cnt = c[0] === "all" ? all.length : all.filter(function (o) { return o.status === c[0]; }).length;
+      var b = document.createElement("button"); b.className = "chip"; b.textContent = c[1] + " (" + bn(cnt) + ")";
+      b.setAttribute("aria-pressed", state.oFilter === c[0] ? "true" : "false");
+      b.addEventListener("click", function () { state.oFilter = c[0]; renderOrders(); });
+      $("oChips").appendChild(b);
+    });
+    var list = all.filter(function (o) { return state.oFilter === "all" || o.status === state.oFilter; });
+    var box = $("olist"); box.innerHTML = list.length ? "" : '<p class="empty">কোনো অর্ডার নেই।</p>';
+    list.forEach(function (o) {
+      var phone = String(o.phone || "").replace(/[^\d+]/g, "");
+      var waNum = phone.replace(/^\+/, "").replace(/^0/, "880");
+      var stLabel = (STATUSES.filter(function (s) { return s[0] === o.status; })[0] || [o.status, o.status])[1];
+      var el = document.createElement("div"); el.className = "card order";
+      el.innerHTML =
+        '<h3><span>' + esc(o.id) + ' • ' + esc(o.name) + '</span><span class="st st-' + esc(o.status) + '">' + esc(stLabel) + '</span></h3>' +
+        '<div class="muted" style="font-size:.85rem">' + esc(o.time) + '</div>' +
+        '<div class="lines">' +
+          '<div>📱 <a href="tel:' + esc(phone) + '">' + esc(o.phone) + '</a></div>' +
+          '<div>🏠 ' + esc(o.address) + ' <span class="muted">(' + esc(o.area) + ')</span></div>' +
+          '<div>🛍️ <b>' + esc(o.code) + '</b> ' + esc(o.product) + '</div>' +
+          '<div>📏 সাইজ: ' + esc(o.size || "—") + ' • পরিমাণ: ' + bn(esc(o.qty || 1)) + '</div>' +
+          '<div>💰 সর্বমোট: <b>' + taka(o.total) + '</b> <span class="muted">(ডেলিভারি ' + taka(o.delivery) + ')</span></div>' +
+          (o.note ? '<div>📝 ' + esc(o.note) + '</div>' : '') +
+        '</div>' +
+        '<div class="pactions">' +
+          '<a class="btn btn-ghost btn-sm" href="tel:' + esc(phone) + '">📞 কল</a>' +
+          '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + esc(waNum) + '">WhatsApp</a>' +
+        '</div>' +
+        '<div class="stbtns"></div>';
+      var sb = el.querySelector(".stbtns");
+      STATUSES.forEach(function (s) {
+        var b = document.createElement("button"); b.className = "btn btn-ghost btn-sm" + (o.status === s[0] ? " on" : ""); b.textContent = s[1];
+        b.addEventListener("click", function () { if (o.status !== s[0]) setStatus(o, s[0]); });
+        sb.appendChild(b);
+      });
+      box.appendChild(el);
+    });
+  }
+  function setStatus(o, st) {
+    busy(true, "আপডেট হচ্ছে…");
+    fetch(endpoint(), { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "status", key: localStorage.getItem(LS_KEY), id: o.id, status: st }) })
+      .then(function (r) { return r.json(); }).then(function (j) {
+        busy(false);
+        if (!j.ok) { toast("আপডেট হয়নি: " + j.error, true); return; }
+        o.status = st; renderOrders(); toast("আপডেট হয়েছে ✅");
+      }).catch(function () { busy(false); toast("আপডেট হয়নি — ইন্টারনেট চেক করুন", true); });
+  }
+
+  /* ---------- Start ---------- */
+  if (!token) { showLogin(); }
+  else {
+    showMain();
+    loadAll().catch(function (e) { if (e.status === 401) { localStorage.removeItem(LS_TOKEN); token = ""; showLogin(friendly(e)); } else toast("লোড হয়নি: " + friendly(e), true); });
+  }
+  window.__sohaAdmin = { state: state }; // for debugging
+})();
+</script>
+</body>
+</html>
