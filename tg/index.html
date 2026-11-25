@@ -91,8 +91,8 @@ $('btnFind').onclick=async()=>{try{const r=await api('getUpdates');if(!r.ok)retu
  const c=ch[ch.length-1];$('chat').value=c.id;say('chatMsg','✅ Paoa geche: '+(c.title||c.id),'ok')}catch(e){say('chatMsg','❌ Net problem','err')}};
 $('btnSave').onclick=()=>{LS.set('token',tok());LS.set('chat',$('chat').value.trim());say('chatMsg','✅ Save hoyeche','ok');upd()};
 
-$('btnPick').onclick=()=>$('files').click();$('btnFolder').onclick=()=>$('folder').click();
-function onPick(e){picked=[...e.target.files];upd()}
+$('btnPick').onclick=()=>{say('selMsg','⏳ Opekkha koro…','mut');$('files').click()};$('btnFolder').onclick=()=>{say('selMsg','⏳ Folder pora hocche, onek chobi thakle 1-2 minute lagte pare. Page bondho koro na…','mut');$('folder').click()};
+function onPick(e){const fl=e.target.files;say('selMsg','⏳ '+fl.length+' ta file pawa geche, gona hocche…','mut');setTimeout(()=>{picked=[...fl].filter(f=>!f.name.startsWith('.'));upd()},50)}
 $('files').onchange=onPick;$('folder').onchange=onPick;
 function upd(){const todo=picked.filter(f=>!sent.has(key(f)));const big=todo.filter(f=>f.size>MAX).length;
  let mb=todo.reduce((a,f)=>a+f.size,0)/1048576;
