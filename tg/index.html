@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>TG Uploader</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#0f1720;color:#e8eef4;font-size:16px;line-height:1.45}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 14px}
+.card{background:#18222e;border:1px solid #263445;border-radius:16px;padding:14px;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 10px}
+label{display:block;font-size:14px;color:#9fb0c2;margin:8px 0 4px}
+input[type=text],input[type=password]{width:100%;padding:12px;border-radius:10px;border:1px solid #33465c;background:#0f1720;color:#e8eef4;font-size:15px}
+button{width:100%;padding:13px;border:0;border-radius:12px;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}
+.pri{background:#2aabee;color:#fff}.sec{background:#26364a;color:#e8eef4}.red{background:#c0392b;color:#fff}
+button:disabled{opacity:.45}
+.msg{font-size:14px;margin-top:8px;white-space:pre-wrap}
+.ok{color:#5fd38d}.err{color:#ff7b72}.mut{color:#9fb0c2}
+.bar{height:14px;background:#0f1720;border-radius:8px;overflow:hidden;margin-top:10px;border:1px solid #33465c}
+.bar>div{height:100%;width:0;background:#2aabee;transition:width .3s}
+.big{font-size:20px;font-weight:700;margin-top:8px}
+.row{display:flex;gap:8px}.row button{flex:1}
+details{font-size:14px;color:#9fb0c2}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>📤 Telegram Uploader</h1>
+
+<div class="card" id="setup">
+  <h2>১. Setup (ekbar-i)</h2>
+  <label>Bot token (BotFather theke)</label>
+  <input type="password" id="token" placeholder="123456:ABC..." autocomplete="off">
+  <button class="sec" id="btnBot">Bot check koro</button>
+  <div class="msg" id="botMsg"></div>
+  <label>Channel ID</label>
+  <input type="text" id="chat" placeholder="-100... (nicher button chapo)">
+  <button class="sec" id="btnFind">Channel khuje bair koro</button>
+  <div class="msg mut">Age bot-ke channel-e Admin banao, tarpor channel-e jekono ekta message likho, tarpor ei button chapo.</div>
+  <div class="msg" id="chatMsg"></div>
+  <button class="pri" id="btnSave">Save</button>
+  <div class="msg mut">Token shudhu tomar ei phone-er browser-e thake, kothao pathano hoy na (shudhu Telegram-e).</div>
+</div>
+
+<div class="card">
+  <h2>২. File select</h2>
+  <div class="row">
+    <button class="sec" id="btnPick">Chobi / File</button>
+    <button class="sec" id="btnFolder">Puro Folder</button>
+  </div>
+  <input type="file" id="files" multiple hidden>
+  <input type="file" id="folder" webkitdirectory multiple hidden>
+  <div class="msg" id="selMsg">Kichu select kora hoyni</div>
+</div>
+
+<div class="card">
+  <h2>৩. Upload</h2>
+  <div class="row">
+    <button class="pri" id="btnStart" disabled>Upload shuru</button>
+    <button class="red" id="btnStop" disabled>Thamao</button>
+  </div>
+  <div class="bar"><div id="prog"></div></div>
+  <div class="big" id="count">0 / 0</div>
+  <div class="msg" id="upMsg"></div>
+  <div class="msg mut">Upload cholar shomoy ei page khola rakho, screen bondho koro na. Aage pathano file abar pathabe na.</div>
+  <button class="sec" id="btnReset">Pathano-r list muche felo</button>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const LS={get:k=>localStorage.getItem('tgu_'+k)||'',set:(k,v)=>localStorage.setItem('tgu_'+k,v)};
+$('token').value=LS.get('token');$('chat').value=LS.get('chat');
+if(LS.get('token')&&LS.get('chat'))$('setup').querySelector('h2').textContent='১. Setup ✅ (save kora ache)';
+const MAX=50*1024*1024;let picked=[],stop=false,wake=null;
+let sent=new Set(JSON.parse(LS.get('sent')||'[]'));
+const key=f=>(f.webkitRelativePath||f.name)+'|'+f.size+'|'+f.lastModified;
+const api=(m,fd)=>fetch('https://api.telegram.org/bot'+$('token').value.trim()+'/'+m,{method:'POST',body:fd||new FormData()}).then(r=>r.json());
+function say(el,t,c){$(el).textContent=t;$(el).className='msg '+(c||'')}
+
+$('btnBot').onclick=async()=>{try{const r=await api('getMe');r.ok?say('botMsg','✅ Bot: @'+r.result.username,'ok'):say('botMsg','❌ Token thik nai: '+r.description,'err')}catch(e){say('botMsg','❌ Net problem','err')}};
+$('btnFind').onclick=async()=>{try{const r=await api('getUpdates');if(!r.ok)return say('chatMsg','❌ '+r.description,'err');
+ const ch=r.result.map(u=>(u.channel_post||u.my_chat_member||{}).chat).filter(c=>c&&c.type==='channel');
+ if(!ch.length)return say('chatMsg','Channel paoa jayni. Bot-ke Admin banao, channel-e notun ekta message likho, abar chapo.','err');
+ const c=ch[ch.length-1];$('chat').value=c.id;say('chatMsg','✅ Paoa geche: '+(c.title||c.id),'ok')}catch(e){say('chatMsg','❌ Net problem','err')}};
+$('btnSave').onclick=()=>{LS.set('token',$('token').value.trim());LS.set('chat',$('chat').value.trim());say('chatMsg','✅ Save hoyeche','ok');upd()};
+
+$('btnPick').onclick=()=>$('files').click();$('btnFolder').onclick=()=>$('folder').click();
+function onPick(e){picked=[...e.target.files];upd()}
+$('files').onchange=onPick;$('folder').onchange=onPick;
+function upd(){const todo=picked.filter(f=>!sent.has(key(f)));const big=todo.filter(f=>f.size>MAX).length;
+ let mb=todo.reduce((a,f)=>a+f.size,0)/1048576;
+ say('selMsg',picked.length?`${picked.length} ta select · ${todo.length} ta pathano baki (${mb.toFixed(0)} MB)`+(big?`\n⚠️ ${big} ta file 50 MB-er beshi, egulo bad jabe`:''):'Kichu select kora hoyni');
+ $('btnStart').disabled=!(todo.length&&$('token').value&&$('chat').value)}
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function sendGroup(g){
+ while(true){const fd=new FormData();fd.append('chat_id',$('chat').value.trim());
+  let r;
+  if(g.length===1){fd.append('document',g[0],g[0].name);fd.append('disable_notification','true');r=await api('sendDocument',fd)}
+  else{fd.append('media',JSON.stringify(g.map((f,i)=>({type:'document',media:'attach://f'+i}))));g.forEach((f,i)=>fd.append('f'+i,f,f.name));fd.append('disable_notification','true');r=await api('sendMediaGroup',fd)}
+  if(r.ok)return true;
+  if(r.error_code===429){const w=(r.parameters&&r.parameters.retry_after||5);say('upMsg',`Telegram ektu thamte bolche, ${w} second opekkha…`,'mut');await sleep(w*1000+500);continue}
+  throw new Error(r.description)}}
+$('btnStart').onclick=async()=>{
+ const todo=picked.filter(f=>!sent.has(key(f))&&f.size<=MAX);if(!todo.length)return;
+ stop=false;$('btnStart').disabled=true;$('btnStop').disabled=false;
+ try{wake=await navigator.wakeLock.request('screen')}catch(e){}
+ let done=0;const tot=todo.length;
+ const show=()=>{$('count').textContent=done+' / '+tot;$('prog').style.width=(done/tot*100)+'%'};show();
+ // groups of up to 10, total < 45MB per request
+ let i=0;
+ while(i<todo.length&&!stop){let g=[],sz=0;while(i<todo.length&&g.length<10&&(sz+todo[i].size<=45*1048576||!g.length)){g.push(todo[i]);sz+=todo[i].size;i++}
+  say('upMsg','Pathano hocche…','mut');
+  try{await sendGroup(g);g.forEach(f=>sent.add(key(f)));LS.set('sent',JSON.stringify([...sent]));done+=g.length;show();await sleep(3100)}
+  catch(e){say('upMsg','❌ Somossa: '+e.message+'\nAbar "Upload shuru" chapo, baki gulo theke shuru hobe.','err');break}}
+ if(wake)try{wake.release()}catch(e){}
+ if(done===tot)say('upMsg','✅ Shob pathano shesh! Ekhon gallery theke delete korte paro.','ok');else if(stop)say('upMsg','⏸ Thamano hoyeche. Abar chapo, baki theke shuru hobe.','mut');
+ $('btnStop').disabled=true;upd()};
+$('btnStop').onclick=()=>{stop=true};
+$('btnReset').onclick=()=>{if(confirm('Pathano-r list muche felbo?')){sent=new Set();LS.set('sent','[]');upd()}};
+upd();
+</script>
+</body>
+</html>
