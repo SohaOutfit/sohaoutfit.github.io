@@ -35,6 +35,7 @@ details{font-size:14px;color:#9fb0c2}
   <label>Bot token (BotFather theke)</label>
   <input type="password" id="token" placeholder="123456:ABC..." autocomplete="off">
   <button class="sec" id="btnBot">Bot check koro</button>
+  <button class="sec" id="btnDirect">Direct test (notun tab)</button>
   <div class="msg" id="botMsg"></div>
   <label>Channel ID</label>
   <input type="text" id="chat" placeholder="-100... (nicher button chapo)">
@@ -82,7 +83,8 @@ function tok(){const v=$('token').value;const m=v.match(/\d{6,}:[A-Za-z0-9_-]{30
 const api=(m,fd)=>fetch('https://api.telegram.org/bot'+tok()+'/'+m,{method:'POST',body:fd||new FormData()}).then(r=>r.json());
 function say(el,t,c){$(el).textContent=t;$(el).className='msg '+(c||'')}
 
-$('btnBot').onclick=async()=>{$('token').value=tok();try{const r=await api('getMe');r.ok?say('botMsg','✅ Bot: @'+r.result.username,'ok'):say('botMsg','❌ Token thik nai: '+r.description,'err')}catch(e){say('botMsg','❌ Telegram-e pouchano jacche na. Net/VPN check koro.','err')}};
+$('btnBot').onclick=async()=>{$('token').value=tok();try{const r=await api('getMe');r.ok?say('botMsg','✅ Bot: @'+r.result.username,'ok'):say('botMsg','❌ Token thik nai: '+r.description,'err')}catch(e){say('botMsg','❌ Telegram-e pouchano jacche na ('+(e&&e.message||e)+'). "Direct test" chapo.','err')}};
+$('btnDirect').onclick=()=>{window.open('https://api.telegram.org/bot'+tok()+'/getMe','_blank')};
 $('btnFind').onclick=async()=>{try{const r=await api('getUpdates');if(!r.ok)return say('chatMsg','❌ '+r.description,'err');
  const ch=r.result.map(u=>(u.channel_post||u.my_chat_member||{}).chat).filter(c=>c&&c.type==='channel');
  if(!ch.length)return say('chatMsg','Channel paoa jayni. Bot-ke Admin banao, channel-e notun ekta message likho, abar chapo.','err');
