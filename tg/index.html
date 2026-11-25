@@ -78,15 +78,16 @@ if(LS.get('token')&&LS.get('chat'))$('setup').querySelector('h2').textContent='�
 const MAX=50*1024*1024;let picked=[],stop=false,wake=null;
 let sent=new Set(JSON.parse(LS.get('sent')||'[]'));
 const key=f=>(f.webkitRelativePath||f.name)+'|'+f.size+'|'+f.lastModified;
-const api=(m,fd)=>fetch('https://api.telegram.org/bot'+$('token').value.trim()+'/'+m,{method:'POST',body:fd||new FormData()}).then(r=>r.json());
+function tok(){const v=$('token').value;const m=v.match(/\d{6,}:[A-Za-z0-9_-]{30,}/);return m?m[0]:v.replace(/\s+/g,'')}
+const api=(m,fd)=>fetch('https://api.telegram.org/bot'+tok()+'/'+m,{method:'POST',body:fd||new FormData()}).then(r=>r.json());
 function say(el,t,c){$(el).textContent=t;$(el).className='msg '+(c||'')}
 
-$('btnBot').onclick=async()=>{try{const r=await api('getMe');r.ok?say('botMsg','✅ Bot: @'+r.result.username,'ok'):say('botMsg','❌ Token thik nai: '+r.description,'err')}catch(e){say('botMsg','❌ Net problem','err')}};
+$('btnBot').onclick=async()=>{$('token').value=tok();try{const r=await api('getMe');r.ok?say('botMsg','✅ Bot: @'+r.result.username,'ok'):say('botMsg','❌ Token thik nai: '+r.description,'err')}catch(e){say('botMsg','❌ Telegram-e pouchano jacche na. Net/VPN check koro.','err')}};
 $('btnFind').onclick=async()=>{try{const r=await api('getUpdates');if(!r.ok)return say('chatMsg','❌ '+r.description,'err');
  const ch=r.result.map(u=>(u.channel_post||u.my_chat_member||{}).chat).filter(c=>c&&c.type==='channel');
  if(!ch.length)return say('chatMsg','Channel paoa jayni. Bot-ke Admin banao, channel-e notun ekta message likho, abar chapo.','err');
  const c=ch[ch.length-1];$('chat').value=c.id;say('chatMsg','✅ Paoa geche: '+(c.title||c.id),'ok')}catch(e){say('chatMsg','❌ Net problem','err')}};
-$('btnSave').onclick=()=>{LS.set('token',$('token').value.trim());LS.set('chat',$('chat').value.trim());say('chatMsg','✅ Save hoyeche','ok');upd()};
+$('btnSave').onclick=()=>{LS.set('token',tok());LS.set('chat',$('chat').value.trim());say('chatMsg','✅ Save hoyeche','ok');upd()};
 
 $('btnPick').onclick=()=>$('files').click();$('btnFolder').onclick=()=>$('folder').click();
 function onPick(e){picked=[...e.target.files];upd()}
