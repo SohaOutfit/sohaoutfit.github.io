@@ -80,7 +80,7 @@ const MAX=50*1024*1024;let picked=[],stop=false,wake=null;
 let sent=new Set(JSON.parse(LS.get('sent')||'[]'));
 const key=f=>(f.webkitRelativePath||f.name)+'|'+f.size+'|'+f.lastModified;
 function tok(){const v=$('token').value;const m=v.match(/\d{6,}:[A-Za-z0-9_-]{30,}/);return m?m[0]:v.replace(/\s+/g,'')}
-const api=(m,fd)=>fetch('https://api.telegram.org/bot'+tok()+'/'+m,{method:'POST',body:fd||new FormData()}).then(r=>r.json());
+const api=(m,fd)=>fetch('https://api.telegram.org/bot'+tok()+'/'+m,fd?{method:'POST',body:fd}:{}).then(async r=>{const t=await r.text();try{return JSON.parse(t)}catch(e){return {ok:false,error_code:r.status,description:'HTTP '+r.status}}});
 function say(el,t,c){$(el).textContent=t;$(el).className='msg '+(c||'')}
 
 $('btnBot').onclick=async()=>{$('token').value=tok();try{const r=await api('getMe');r.ok?say('botMsg','✅ Bot: @'+r.result.username,'ok'):say('botMsg','❌ Token thik nai: '+r.description,'err')}catch(e){say('botMsg','❌ Telegram-e pouchano jacche na ('+(e&&e.message||e)+'). "Direct test" chapo.','err')}};
